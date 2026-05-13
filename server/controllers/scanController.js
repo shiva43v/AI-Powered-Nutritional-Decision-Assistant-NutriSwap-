@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const cloudinary = require('../config/cloudinary');
-const { identifyFoodFromImage, generateNutriSwap } = require('../services/geminiService');
+const { identifyFoodFromImage, identifyFoodFromText, generateNutriSwap } = require('../services/geminiService');
 const { calculateUtilityGrade } = require('../services/gradeService');
 const User = require('../models/User');
 const MealLog = require('../models/MealLog');
@@ -104,6 +104,80 @@ const processScan = async (req, res) => {
   }
 };
 
+// @desc    Process a food description (Text -> Grade -> Swap)
+// @route   POST /api/scan/text
+// @access  Private
+const processTextScan = async (req, res) => {
+  try {
+    const { text } = req.body;
+    
+    if (!text) {
+      return res.status(400).json({ message: 'Please provide a food description' });
+    }
+
+    const user = await User.findById(req.user._id);
+    const userGoal = user.profile.goal || 'Maintenance';
+    const tdee = user.profile.tdee || 2000;
+
+    // 1. Identify Food via Gemini Text
+    const foodItems = await identifyFoodFromText(text);
+    
+    if (!foodItems || foodItems.length === 0) {
+      return res.status(400).json({ message: 'Could not identify any food items in your description.' });
+    }
+
+    // 2. Calculate Utility Grade
+    const gradeData = calculateUtilityGrade(foodItems, userGoal, tdee);
+
+    // 3. Generate NutriSwaps
+    const swaps = await generateNutriSwap(foodItems, userGoal);
+
+    // 4. Save SwapSuggestions to DB
+    const savedSwaps = [];
+    for (let swap of swaps) {
+      const originalFood = foodItems.find(f => f.name.toLowerCase().includes(swap.originalFoodName?.toLowerCase()) || f.name === swap.originalFoodName) || foodItems[0];
+      
+      const newSwap = await SwapSuggestion.create({
+        user: req.user._id,
+        originalFood: {
+          name: originalFood.name,
+          calories: originalFood.calories,
+          macros: {
+            protein: originalFood.protein,
+            carbs: originalFood.carbs,
+            fats: originalFood.fats
+          }
+        },
+        suggestedSwap: {
+          name: swap.name,
+          description: swap.description,
+          calories: swap.calories,
+          macros: {
+            protein: swap.protein,
+            carbs: swap.carbs,
+            fats: swap.fats
+          },
+          whyItsBetter: swap.whyItsBetter
+        },
+        goalContext: userGoal
+      });
+      savedSwaps.push(newSwap);
+    }
+
+    res.status(200).json({
+      identifiedFood: foodItems,
+      grade: gradeData,
+      swaps: savedSwaps,
+      imageUrl: null // No image for text scan
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
-  processScan
+  processScan,
+  processTextScan
 };

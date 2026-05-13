@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, Lock, Mail, Target } from 'lucide-react';
-import useAuthStore from '../../store/authStore';
+import useAuthStore from '../store/authStore';
 import axios from 'axios';
 import './AuthPage.css';
 
@@ -19,7 +19,7 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const { setAuth, setLoading, isLoading } = useAuthStore();
 
-  const API_URL = 'http://localhost:5000/api/auth';
+  const API_URL = `${import.meta.env.VITE_API_URL}/auth`;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

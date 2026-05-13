@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Flame, Target, Utensils, History } from 'lucide-react';
-import useAuthStore from '../../store/authStore';
+import useAuthStore from '../store/authStore';
 import './Dashboard.css';
 
 ChartJS.register(ArcElement, Tooltip, Legend);

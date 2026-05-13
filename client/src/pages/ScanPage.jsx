@@ -1,14 +1,15 @@
 import { useState, useRef } from 'react';
-import { Camera, Upload, X, Zap, ArrowRight, RefreshCw, AlertCircle } from 'lucide-react';
+import { Camera, Upload, X, Zap, ArrowRight, RefreshCw, AlertCircle, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import useScanStore from '../../store/scanStore';
-import useAuthStore from '../../store/authStore';
+import useScanStore from '../store/scanStore';
+import useAuthStore from '../store/authStore';
 import axios from 'axios';
 import './ScanPage.css';
 
 const ScanPage = () => {
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [searchText, setSearchText] = useState('');
   
   const fileInputRef = useRef(null);
   
@@ -34,7 +35,7 @@ const ScanPage = () => {
     formData.append('image', file);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/scan/process', formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/scan/process`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`
@@ -43,6 +44,27 @@ const ScanPage = () => {
       setScanResults(response.data);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to analyze image. Please try again.');
+    } finally {
+      setScanning(false);
+    }
+  };
+
+  const handleTextSubmit = async (e) => {
+    e.preventDefault();
+    if (!searchText.trim()) return;
+    
+    setScanning(true);
+    setError(null);
+    
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/scan/text`, { text: searchText }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setScanResults(response.data);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to analyze text. Please try again.');
     } finally {
       setScanning(false);
     }
@@ -109,10 +131,34 @@ const ScanPage = () => {
               />
             </div>
 
+            {!previewUrl && (
+              <>
+                <div className="scan-divider">
+                  <span>OR</span>
+                </div>
+
+                <form onSubmit={handleTextSubmit} className="text-search-form">
+                  <div className="search-input-wrapper">
+                    <Search size={18} className="search-icon" />
+                    <input 
+                      type="text" 
+                      placeholder="Describe your meal (e.g. 2 slices of pepperoni pizza)"
+                      value={searchText}
+                      onChange={(e) => setSearchText(e.target.value)}
+                      className="search-input"
+                    />
+                  </div>
+                  <button type="submit" className="btn btn-outline btn-search" disabled={isScanning || !searchText.trim()}>
+                    Identify
+                  </button>
+                </form>
+              </>
+            )}
+
             {previewUrl && !isScanning && (
               <button className="btn btn-primary btn-scan" onClick={handleScan}>
                 <Zap size={20} />
-                <span>Analyze Meal</span>
+                <span>Analyze Image</span>
               </button>
             )}
           </motion.div>
