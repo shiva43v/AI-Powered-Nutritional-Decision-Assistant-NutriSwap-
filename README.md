@@ -120,4 +120,10 @@ npm run dev
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
-*Developed with ❤️ to help the world eat better.*
+*Developed with ❤️ to help the world eat better.*
+
+
+<img width="1911" height="919" alt="Screenshot 2026-05-13 105608" src="https://github.com/user-attachments/assets/a6c2671b-1b97-4520-9dd4-85655038c662" />
+<img width="1911" height="975" alt="Screenshot 2026-05-13 105752" src="https://github.com/user-attachments/assets/713e0255-bd8c-469d-b5f0-cbb033669fe6" />
+
+
