@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const cloudinary = require('../config/cloudinary');
-const { identifyFoodFromImage, identifyFoodFromText, generateNutriSwap } = require('../services/geminiService');
+const { identifyFoodFromImage, identifyFoodFromText, generateNutriSwap } = require('../services/openRouterService');
 const { calculateUtilityGrade } = require('../services/gradeService');
 const User = require('../models/User');
 const MealLog = require('../models/MealLog');
@@ -23,7 +23,7 @@ const processScan = async (req, res) => {
     const userGoal = user.profile.goal || 'Maintenance';
     const tdee = user.profile.tdee || 2000;
 
-    // 1. Identify Food via Gemini Vision
+    // 1. Identify Food via OpenRouter
     const foodItems = await identifyFoodFromImage(imagePath, mimeType);
     
     if (!foodItems || foodItems.length === 0) {
@@ -119,7 +119,7 @@ const processTextScan = async (req, res) => {
     const userGoal = user.profile.goal || 'Maintenance';
     const tdee = user.profile.tdee || 2000;
 
-    // 1. Identify Food via Gemini Text
+    // 1. Identify Food via OpenRouter
     const foodItems = await identifyFoodFromText(text);
     
     if (!foodItems || foodItems.length === 0) {

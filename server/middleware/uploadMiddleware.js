@@ -13,9 +13,8 @@ const cloudStorage = new CloudinaryStorage({
   }
 });
 
-// Option 2: Use Local storage for temporary processing by Gemini
-// Gemini expects a local file path or base64. We'll use local temp storage, 
-// process it with Gemini, upload to Cloudinary for long-term storage if needed, then delete local.
+// Option 2: Use local storage for temporary processing by OpenRouter.
+// The LLM service reads the file as base64, then Cloudinary stores it long-term.
 const localStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const dir = path.join(__dirname, '../uploads/');

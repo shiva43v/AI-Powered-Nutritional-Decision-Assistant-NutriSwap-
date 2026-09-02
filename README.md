@@ -6,9 +6,9 @@
 [![React](https://img.shields.io/badge/Frontend-React-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
 [![Node.js](https://img.shields.io/badge/Backend-Node.js-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![Google Gemini](https://img.shields.io/badge/AI-Google%20Gemini-4285F4?logo=google&logoColor=white)](https://deepmind.google/technologies/gemini/)
+[![OpenRouter](https://img.shields.io/badge/AI-OpenRouter-111827)](https://openrouter.ai/)
 
-**NutriSwap** is a cutting-edge intelligent application designed to empower users to make healthier food choices. By leveraging the power of Google's Gemini AI, NutriSwap provides real-time nutritional analysis, product grading, and personalized recommendations for healthier alternatives.
+**NutriSwap** is a cutting-edge intelligent application designed to empower users to make healthier food choices. By leveraging OpenRouter with `google/gemma-4-31b-it:free`, NutriSwap provides real-time nutritional analysis, product grading, and personalized recommendations for healthier alternatives.
 
 ---
 
@@ -39,7 +39,7 @@
 ### Backend
 - **Node.js & Express**: Scalable and robust server-side architecture.
 - **MongoDB & Mongoose**: Flexible NoSQL database for user profiles and history.
-- **Google Gemini API**: Advanced LLM and Computer Vision for food analysis.
+- **OpenRouter API**: LLM-powered food analysis and healthier swap generation using `google/gemma-4-31b-it:free`.
 - **Cloudinary**: Secure image storage and management.
 - **JWT**: Secure authentication and authorization.
 
@@ -50,7 +50,7 @@
 ### Prerequisites
 - **Node.js** (v18.x or higher recommended)
 - **MongoDB** (Local instance or MongoDB Atlas)
-- **API Keys**: Google Gemini API key, Cloudinary account.
+- **API Keys**: OpenRouter API key, Cloudinary account.
 
 ### Installation
 
@@ -70,7 +70,10 @@
    PORT=5000
    MONGODB_URI=your_mongodb_connection_string
    JWT_SECRET=your_jwt_secret
-   GEMINI_API_KEY=your_gemini_api_key
+   OPENROUTER_API_KEY=your_openrouter_api_key
+   OPENROUTER_MODEL=google/gemma-4-31b-it:free
+   OPENROUTER_SITE_URL=http://localhost:5173
+   OPENROUTER_APP_NAME=NutriSwap
    CLOUDINARY_CLOUD_NAME=your_cloudinary_name
    CLOUDINARY_API_KEY=your_cloudinary_key
    CLOUDINARY_API_SECRET=your_cloudinary_secret
@@ -101,7 +104,7 @@ npm run dev
 ## 🧠 How It Works
 
 1. **Upload/Scan**: The user uploads an image of a food product or its label.
-2. **AI Processing**: The image is sent to the backend, which interacts with the **Google Gemini Pro Vision** model.
+2. **AI Processing**: The input is sent to the backend, which interacts with OpenRouter using `google/gemma-4-31b-it:free`.
 3. **Extraction**: The AI identifies the product name, nutritional values (calories, fats, proteins, sugars), and ingredient list.
 4. **Grading & Swapping**: Based on the user's specific health goals, the system calculates a grade and searches for healthier products in the same category.
 5. **Insights**: The user receives a detailed breakdown of why the product was graded a certain way and what they should choose instead.
@@ -120,4 +123,4 @@ npm run dev
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
-*Developed with ❤️ to help the world eat better.*
+*Developed with ❤️ to help the world eat better.*
